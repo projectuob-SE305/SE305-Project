@@ -1,6 +1,6 @@
-package business;
+package Business;
 
-import data.OrderRepository;
+import Data.OrderRepository;
 
 /**
  * OrderService handles the business logic for order processing and payment validation.

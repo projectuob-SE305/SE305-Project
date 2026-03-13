@@ -1,8 +1,8 @@
-package presentation;
+package Presentation;
 
 import java.util.Scanner;
-import business.OrderService;
-import data.OrderRepository;
+import Business.OrderService;
+import Data.OrderRepository;
 
 /**
  * OrderView is the entry point for the Order Processing & Payment Module.
