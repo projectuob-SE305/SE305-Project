@@ -5,30 +5,33 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
 import Business.OrderService;
+import Data.OrderRepository;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.io.PrintStream;
 
 @DisplayName("OrderView Test Suite")
 public class OrderViewTest {
 
-    private OrderView orderView;
-    private OrderService mockOrderService;
+    private OrderService orderService;
+    private OrderRepository orderRepository;
     private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
+    private final InputStream originalIn = System.in;
 
     @BeforeEach
     public void setUp() {
-        mockOrderService = mock(OrderService.class);
+        orderRepository = new OrderRepository();
+        orderService = new OrderService(orderRepository);
         System.setOut(new PrintStream(outputStreamCaptor));
     }
 
     @AfterEach
     public void tearDown() {
         System.setOut(originalOut);
+        System.setIn(originalIn);
     }
 
     @Test
@@ -36,14 +39,13 @@ public class OrderViewTest {
     public void testCaptureOrderDetailsSuccessWithCreditCard() {
         String input = "100.50\n1\n";
         System.setIn(new ByteArrayInputStream(input.getBytes()));
-        
-        when(mockOrderService.processOrder(100.50, "Credit Card")).thenReturn(true);
-        
-        orderView = new OrderView(mockOrderService);
+
+        OrderView orderView = new OrderView(orderService);
         orderView.captureOrderDetails();
-        
-        verify(mockOrderService, times(1)).processOrder(100.50, "Credit Card");
-        assertTrue(outputStreamCaptor.toString().contains("ORDER SUCCESSFUL!"));
+
+        String output = outputStreamCaptor.toString();
+        assertTrue(output.contains("ORDER SUCCESSFUL!"));
+        assertEquals(1, orderRepository.getOrderCount());
     }
 
     @Test
@@ -51,14 +53,13 @@ public class OrderViewTest {
     public void testCaptureOrderDetailsSuccessWithPayPal() {
         String input = "75.00\n3\n";
         System.setIn(new ByteArrayInputStream(input.getBytes()));
-        
-        when(mockOrderService.processOrder(75.00, "PayPal")).thenReturn(true);
-        
-        orderView = new OrderView(mockOrderService);
+
+        OrderView orderView = new OrderView(orderService);
         orderView.captureOrderDetails();
-        
-        verify(mockOrderService, times(1)).processOrder(75.00, "PayPal");
-        assertTrue(outputStreamCaptor.toString().contains("ORDER SUCCESSFUL!"));
+
+        String output = outputStreamCaptor.toString();
+        assertTrue(output.contains("ORDER SUCCESSFUL!"));
+        assertEquals(1, orderRepository.getOrderCount());
     }
 
     @Test
@@ -66,13 +67,13 @@ public class OrderViewTest {
     public void testCaptureOrderDetailsWithDebitCard() {
         String input = "50.00\n2\n";
         System.setIn(new ByteArrayInputStream(input.getBytes()));
-        
-        when(mockOrderService.processOrder(50.00, "Debit Card")).thenReturn(true);
-        
-        orderView = new OrderView(mockOrderService);
+
+        OrderView orderView = new OrderView(orderService);
         orderView.captureOrderDetails();
-        
-        verify(mockOrderService, times(1)).processOrder(50.00, "Debit Card");
+
+        String output = outputStreamCaptor.toString();
+        assertTrue(output.contains("ORDER SUCCESSFUL!"));
+        assertEquals(1, orderRepository.getOrderCount());
     }
 
     @Test
@@ -80,27 +81,28 @@ public class OrderViewTest {
     public void testCaptureOrderDetailsWithBankTransfer() {
         String input = "200.00\n4\n";
         System.setIn(new ByteArrayInputStream(input.getBytes()));
-        
-        when(mockOrderService.processOrder(200.00, "Bank Transfer")).thenReturn(true);
-        
-        orderView = new OrderView(mockOrderService);
+
+        OrderView orderView = new OrderView(orderService);
         orderView.captureOrderDetails();
-        
-        verify(mockOrderService, times(1)).processOrder(200.00, "Bank Transfer");
+
+        String output = outputStreamCaptor.toString();
+        assertTrue(output.contains("ORDER SUCCESSFUL!"));
+        assertEquals(1, orderRepository.getOrderCount());
     }
 
     @Test
     @DisplayName("Test order capture fails with invalid amount format")
     public void testCaptureOrderDetailsWithInvalidAmount() {
-        String input = "invalid\n1\n";
+        String input = "invalid\n";
         System.setIn(new ByteArrayInputStream(input.getBytes()));
-        
-        orderView = new OrderView(mockOrderService);
+
+        OrderView orderView = new OrderView(orderService);
         orderView.captureOrderDetails();
-        
-        verify(mockOrderService, never()).processOrder(anyDouble(), anyString());
-        assertTrue(outputStreamCaptor.toString().contains("ERROR"));
-        assertTrue(outputStreamCaptor.toString().contains("Invalid amount format"));
+
+        String output = outputStreamCaptor.toString();
+        assertTrue(output.contains("ERROR"));
+        assertTrue(output.contains("Invalid amount format"));
+        assertEquals(0, orderRepository.getOrderCount());
     }
 
     @Test
@@ -108,29 +110,14 @@ public class OrderViewTest {
     public void testCaptureOrderDetailsWithInvalidPaymentMethod() {
         String input = "100.00\n5\n";
         System.setIn(new ByteArrayInputStream(input.getBytes()));
-        
-        orderView = new OrderView(mockOrderService);
-        orderView.captureOrderDetails();
-        
-        verify(mockOrderService, never()).processOrder(anyDouble(), anyString());
-        assertTrue(outputStreamCaptor.toString().contains("ERROR"));
-        assertTrue(outputStreamCaptor.toString().contains("Invalid payment method"));
-    }
 
-    @Test
-    @DisplayName("Test order processing failure displays error message")
-    public void testCaptureOrderDetailsProcessingFailure() {
-        String input = "100.00\n1\n";
-        System.setIn(new ByteArrayInputStream(input.getBytes()));
-        
-        when(mockOrderService.processOrder(100.00, "Credit Card")).thenReturn(false);
-        
-        orderView = new OrderView(mockOrderService);
+        OrderView orderView = new OrderView(orderService);
         orderView.captureOrderDetails();
-        
-        verify(mockOrderService, times(1)).processOrder(100.00, "Credit Card");
-        assertTrue(outputStreamCaptor.toString().contains("ERROR"));
-        assertTrue(outputStreamCaptor.toString().contains("Order processing failed"));
+
+        String output = outputStreamCaptor.toString();
+        assertTrue(output.contains("ERROR"));
+        assertTrue(output.contains("Invalid payment method"));
+        assertEquals(0, orderRepository.getOrderCount());
     }
 
     @Test
@@ -138,12 +125,10 @@ public class OrderViewTest {
     public void testWelcomeMessageDisplayed() {
         String input = "100.00\n1\n";
         System.setIn(new ByteArrayInputStream(input.getBytes()));
-        
-        when(mockOrderService.processOrder(anyDouble(), anyString())).thenReturn(true);
-        
-        orderView = new OrderView(mockOrderService);
+
+        OrderView orderView = new OrderView(orderService);
         orderView.captureOrderDetails();
-        
+
         String output = outputStreamCaptor.toString();
         assertTrue(output.contains("Online Shopping - Order Processing"));
         assertTrue(output.contains("Payment Module"));
@@ -154,15 +139,27 @@ public class OrderViewTest {
     public void testSuccessMessageDisplaysCorrectDetails() {
         String input = "123.45\n3\n";
         System.setIn(new ByteArrayInputStream(input.getBytes()));
-        
-        when(mockOrderService.processOrder(123.45, "PayPal")).thenReturn(true);
-        
-        orderView = new OrderView(mockOrderService);
+
+        OrderView orderView = new OrderView(orderService);
         orderView.captureOrderDetails();
-        
+
         String output = outputStreamCaptor.toString();
         assertTrue(output.contains("$123.45"));
         assertTrue(output.contains("PayPal"));
         assertTrue(output.contains("COMPLETED"));
+    }
+
+    @Test
+    @DisplayName("Test order processing with zero amount shows failure")
+    public void testCaptureOrderDetailsWithZeroAmount() {
+        String input = "0\n1\n";
+        System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+        OrderView orderView = new OrderView(orderService);
+        orderView.captureOrderDetails();
+
+        String output = outputStreamCaptor.toString();
+        assertTrue(output.contains("Order processing failed"));
+        assertEquals(0, orderRepository.getOrderCount());
     }
 }
