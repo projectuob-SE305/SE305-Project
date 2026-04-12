@@ -1,3 +1,5 @@
-Data\OrderRepositoryTest.class
-Presentation\OrderViewTest.class
 Business\OrderServiceTest.class
+Data\OrderRepositoryTest.class
+randoop\RegressionTest.class
+Presentation\OrderViewTest.class
+randoop\RegressionTest0.class
