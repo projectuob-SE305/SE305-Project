@@ -1,5 +1,5 @@
-package data;
-
+import data.User;
+import data.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
