@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: randoop.RegressionTest0
+-------------------------------------------------------------------------------
+Tests run: 103, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.364 s -- in randoop.RegressionTest0
