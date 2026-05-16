@@ -9,9 +9,9 @@ import data.UserRepository;
 public class UserService {
 
     private final UserRepository repository;
+     // Intentional compile-time error for testing: incompatible types
+    String INTENTIONAL_ERROR = "this-will-not-compile";
     
-    // Intentional compile-time error for testing: incompatible types
-    int INTENTIONAL_ERROR = "this-will-not-compile";
     public UserService() {
         repository = new UserRepository();
     }
