@@ -2,6 +2,6 @@
 
 | Reviewer | Reviewee | Reviewed Component |
 | :--- | :--- | :--- |
-| Hassan | Yusuf |       |
-| Yusuf   | Abdulaziz |      |
-| Abdulaziz | Hassan |     |
+| Hassan | Abdulaziz |       |
+| Yusuf   | Hassan |      |
+| Abdulaziz | Yusuf |     |
