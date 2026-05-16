@@ -66,7 +66,8 @@ public class OrderService {
                 "Amount: %.2f, Payment Method: %s, Status: COMPLETED",
                 amount, paymentMethod);
 
-        orderRepository.saveOrder(orderInfo.toString()); // ERROR: unnecessary + can cause confusion
+        orderRepository.saveOrder(orderInfo);
+
         System.out.println("[Business Layer] Order processed successfully.");
         return true;
     }
@@ -78,7 +79,7 @@ public class OrderService {
      * @return true if the amount is positive and non-zero, false otherwise.
      */
     private boolean validatePayment(double amount) {
-        return amount > 0; //fixed
+        return amount >= 0;
     }
 
     /**
