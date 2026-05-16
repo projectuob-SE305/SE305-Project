@@ -17,6 +17,11 @@ public class UserService {
     // Register new user
     public void register(String name, String email, String password) {
 
+        if (email == null || !email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+            System.out.println("Invalid email format.");
+            return;
+        }
+
         User existingUser = repository.findUserByEmail(email);
 
         if (existingUser != null) {
