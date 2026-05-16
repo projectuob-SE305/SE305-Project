@@ -40,6 +40,7 @@ public class OrderService {
      * @return true if the order was processed successfully, false otherwise.
      */
     public boolean processOrder(double amount, String paymentMethod) {
+
         // Step 1: Validate payment amount
         if (!validatePayment(amount)) {
             System.out.println("[Business Layer] Payment validation failed: Amount must be positive and non-zero.");
@@ -54,29 +55,31 @@ public class OrderService {
 
         // Step 3: Simulate payment gateway transaction
         boolean paymentSuccess = simulatePaymentGateway(amount, paymentMethod);
-        
+
         if (!paymentSuccess) {
             System.out.println("[Business Layer] Payment gateway transaction failed.");
             return false;
         }
 
         // Step 4: Store the order in the repository
-        String orderInfo = String.format("Amount: %.2f, Payment Method: %s, Status: COMPLETED", 
-                                          amount, paymentMethod);
+        String orderInfo = String.format(
+                "Amount: %.2f, Payment Method: %s, Status: COMPLETED",
+                amount, paymentMethod);
+
         orderRepository.saveOrder(orderInfo);
-        
+
         System.out.println("[Business Layer] Order processed successfully.");
         return true;
     }
 
     /**
-     * Validates that the payment amount is positive and non-zero.
-     *
-     * @param amount The payment amount to validate.
-     * @return true if the amount is valid (positive and non-zero), false otherwise.
+     * ERROR VERSION:
+     * This validation incorrectly allows zero-value payments.
      */
     private boolean validatePayment(double amount) {
-        return amount > 0;
+
+        // ERROR: should be amount > 0
+        return amount >= 0;
     }
 
     /**
@@ -88,13 +91,15 @@ public class OrderService {
      * @return true if the simulated transaction is successful, false otherwise.
      */
     private boolean simulatePaymentGateway(double amount, String paymentMethod) {
+
         System.out.println("[Business Layer] Simulating payment gateway transaction...");
-        System.out.println("[Business Layer] Processing " + paymentMethod + " payment of $" + 
-                           String.format("%.2f", amount));
-        
-        // Simulate processing delay (in a real system)
-        // For simulation purposes, we assume all valid payments succeed
+
+        System.out.println("[Business Layer] Processing " + paymentMethod
+                + " payment of $" + String.format("%.2f", amount));
+
+        // Simulate processing delay
         System.out.println("[Business Layer] Payment gateway response: APPROVED");
+
         return true;
     }
 }
