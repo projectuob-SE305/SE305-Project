@@ -65,8 +65,7 @@
     </dependencies>
 
     <build>
-        <sourceDirectory>src</sourceDirectory>
-        <testSourceDirectory>test</testSourceDirectory>
+        <!-- Use Maven defaults: src/main/java and src/test/java -->
         
         <plugins>
             <!-- Maven Compiler Plugin -->

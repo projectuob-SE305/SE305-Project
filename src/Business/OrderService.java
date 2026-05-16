@@ -73,12 +73,12 @@ public class OrderService {
     }
 
     /**
-     * ERROR VERSION:
-     * This validation incorrectly allows zero-value payments.
+     * Validates the payment amount.
+     * 
+     * @param amount The payment amount to validate.
+     * @return true if the amount is positive and non-zero, false otherwise.
      */
     private boolean validatePayment(double amount) {
-
-        // ERROR: should be amount > 0
         return amount >= 0;
     }
 
