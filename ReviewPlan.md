@@ -3,5 +3,5 @@
 | Reviewer | Reviewee | Reviewed Component |
 | :--- | :--- | :--- |
 | Hassan | Abdulaziz |       |
-| Yusuf   | Hassan |      |
+| Yusuf   | Hassan |   Email Validation   |
 | Abdulaziz | Yusuf |     |
